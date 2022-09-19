@@ -54,9 +54,9 @@ class TimeTagger64ch():
         """
         self.clr = __import__('clr')
         print('Initialization of the time tagger')
-        folder_dll = Path(Path(__file__).parents[2], 'bib', 'dll', 'dotfast')
+        # folder_dll = Path(Path(__file__).parents[2], 'bib', 'dll', 'dotfast')
         dll_name = 'ttInterface_3_59_01.dll'
-        sys.path.append(str(folder_dll))
+        # sys.path.append(str(folder_dll))
         self.clr.AddReference(dll_name[:-4])
         self.tita = __import__('TimeTag')
         self.tagger = self.tita.TTInterface()
