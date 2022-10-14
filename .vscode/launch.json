@@ -11,6 +11,13 @@
             "program": "${file}",
             "console": "integratedTerminal",
             "justMyCode": true
+        },
+        {
+            "name": "Python: OSW",
+            "type": "python",
+            "request": "launch",
+            "module": "devices.OSW",            
+            "justMyCode": true
         }
     ]
 }
