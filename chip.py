@@ -1,15 +1,18 @@
 # from pickletools import read_uint1
+import imp
 import numpy as np
 import matplotlib.pyplot as plt
+
+# from discopy.quantum.optics import BBS
 import time
-import pytest
+# import pytest
 # calibration data struture
 
 cdt = np.dtype([
     ('index', np.uint8),
     ('meta_addr', np.uint8, 2),
     ('clemens_addr', np.uint, 2),
-    ('func_para', np.float32, sweep_volts),
+    ('func_para', np.float32),
     ('time', np.datetime64)
 ])
 
@@ -27,8 +30,11 @@ class PhaseShifter:
         self.pin = None
         self.res = None
         self.offset = None
+
         self.volts = np.linspace(0,10,100)
         self.intensity = None
+
+        self.func = None
     
     @property
     def clements_addr(self):
