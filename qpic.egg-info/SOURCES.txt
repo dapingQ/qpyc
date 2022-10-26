@@ -1,0 +1,13 @@
+README
+pyproject.toml
+qpic/__init__.py
+qpic/chip.py
+qpic.egg-info/PKG-INFO
+qpic.egg-info/SOURCES.txt
+qpic.egg-info/dependency_links.txt
+qpic.egg-info/top_level.txt
+qpic/devices/MPM-210h.py
+qpic/devices/OSW.py
+qpic/devices/OSW_simple.py
+qpic/devices/TimeTagger64ch.py
+test/test_chip.py
