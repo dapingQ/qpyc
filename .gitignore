@@ -1,3 +1,4 @@
-devices.egg-info
-./__pycache__
-./.pytest_cache
+*.egg-info/
+__pycache__/
+*.pyc
+.pytest_cache/
