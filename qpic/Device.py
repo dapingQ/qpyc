@@ -233,7 +233,7 @@ class PhaseShifter(Component):
         return np.array([np.exp(1j*self.phase*np.pi)], dtype=np.complex_)
 
     def dagger(self):
-        return np.array([np.exp(-1j*self.phase*np.pi)], dtype=np.complex_)
+        return PhaseShifter(phase=-self.phase, addr=self.addr)
 
 
 class BeamSpiliter(Component):
@@ -256,20 +256,39 @@ class BeamSpiliter(Component):
         sin = np.sin((0.25 + self.bias) * np.pi)
         cos = np.cos((0.25 + self.bias) * np.pi)
         return np.array([[sin, 1j * cos], [1j * cos, sin]], dtype=np.complex_)
+    
+    def dagger(self):
+        """Conjugate transpose of BeamSpiliter by changing the matrix
+
+        Returns
+        -------
+        BeamSpilier
+            Conjugate transpose of BeamSpiliter
+
+        >>> BS = BeamSpiliter(bias=.25)
+        >>> BSD = BS.dagger()
+        >>> assert np.allclose(np.matmul(BS.matrix, BSD.matrix), np.eye(2))
+        """
+        dag = BeamSpiliter(bias=self.bias, addr=self.addr)
+        dag._matrix = np.conjugate(self.matrix)
+        return dag
 
 
 class MZI(Component):
     def __init__(self, theta=0, phi=0, bias=[0, 0], addr=None) -> None:
         """Mach-Zehnder interferometor consisting of 2 biased beam spilitters and 2 phase shifters.
 
-        :param theta: internal phase, defaults to 0
-        :type theta: int, optional
-        :param phi: external phase, defaults to 0
-        :type phi: int, optional
-        :param bias: biases of two beam spiliters, defaults to [0, 0]
-        :type bias: list, optional
-        :param addr: address, defaults to None
-        :type addr: list, optional
+        Parameters
+        ----------
+        theta : int, optional
+            internal phase, by default 0
+        phi : int, optional
+            external phase, by default 0
+        bias : list, optional
+            biases of two beam spiliters, by default [0, 0]
+        addr : list, optional
+            address, by default None        
+
         """
         super().__init__(addr, dom=2)
         self.theta = theta
@@ -281,9 +300,11 @@ class MZI(Component):
 
     @property
     def matrix(self):
+        """
+        TODO: rewrite the matrix representation here
+        """
         mzi = PhaseShifter(self.phi) @ Waveguide() >> BeamSpiliter(self.bias[0]) >> \
-            PhaseShifter(
-                self.theta) @ Waveguide() >> BeamSpiliter(self.bias[1])
+            PhaseShifter(self.theta) @ Waveguide() >> BeamSpiliter(self.bias[1])
         return mzi.matrix
 
     @property
@@ -294,12 +315,15 @@ class MZI(Component):
         return int(sum(self._addr)**2*.25 - self.y)
 
 class Circuit:
-    """
-    Circuit class
-    """
+    """Cricuit class
 
+    A Circuit instance created by this class is a dynamic object consisting of several devices.
+    In principle, all devices should be
+    1.  coordinated and not overlapped
+    2.  added or removed by objects or coordinates
+    Likewise, Circuit can of course be extended in parallel or in series
+    """
     def __init__(self) -> None:
-        # self.dim = 2
         self._devices = []
 
     def __repr__(self) -> str:
@@ -307,6 +331,14 @@ class Circuit:
 
     @property
     def devices(self):
+        """A dictionary including all Circuit devices
+
+        Returns
+        -------
+        dict
+            A dictionary including all Circuit devices, the key is address tuple and the value is Component.
+            Note that _devices attribute is list.
+        """
         self._devices.sort(key=lambda d: d.x)
         return {tuple(d.addr): d for d in self._devices}
 
