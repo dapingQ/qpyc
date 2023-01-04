@@ -1,12 +1,34 @@
 import numpy as np
 import copy
+import matplotlib.pyplot as plt
 
+from qpic.Visualize import plot_circ
 
-def check(addr):
+def checkAddr(addr):
+    """
+    Check if the address is valid, in the form (x,y) and x+y is even
+    """
     if not all(isinstance(i, int) for i in addr) or len(addr) != 2:
-        # if len(addr) != 2:
-        raise TypeError('Wrong Address.')
+        raise TypeError('Wrong address format.')
+    elif sum(addr) % 2 !=0:
+        raise ValueError('The sum of x,y coordinates should be even')
+    else:
+        pass
 
+def xy2idx(addr):
+    """
+    Convert the xy coordinates into the index using in clements coding, in the diagonal order.
+    """
+    checkAddr(addr)
+    return int(sum(addr)**2*.25 - addr[1])
+
+def xy2i(addr, N):
+    """
+    Convert the xy coordinates into the index in the vertical order.
+    """
+    checkAddr(addr)
+    x, y = addr
+    return int( ((x-1)*(N-1) + (y-1))//2 )
 
 class Component:
     def __init__(self, addr=None, dom=None) -> None:
@@ -41,7 +63,7 @@ class Component:
 
     @addr.setter
     def addr(self, addr):
-        check(addr)
+        checkAddr(addr)
         self._addr = addr
 
     @property
@@ -288,6 +310,8 @@ class MZI(Component):
             biases of two beam spiliters, by default [0, 0]
         addr : list, optional
             address, by default None        
+        
+        TODO: change the parameters into property
 
         """
         super().__init__(addr, dom=2)
@@ -428,7 +452,8 @@ class Circuit:
         return Circ
 
     def stack(self, other):
-        """_summary_
+        """
+        Stack two Circuits.
 
         Parameters
         ----------
@@ -464,7 +489,12 @@ class Circuit:
     def __matmul__(self, other):
         return self.stack(other)
 
-
+    def plot(self):
+        _, ax = plt.subplots()
+        ax = plot_circ(self, ax)
+        plt.show()
+        # plt.close()
+        
 if __name__ == "__main__":
     import doctest
     doctest.testmod()

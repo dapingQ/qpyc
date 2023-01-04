@@ -1,5 +1,8 @@
-from .Device import Circuit, MZI
+from qpic.Device import Circuit, MZI
 
+
+
+    
 class ClementsMesh(Circuit):
     def __init__(self, dimension=2) -> None:
         super().__init__()

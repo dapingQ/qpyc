@@ -1,9 +1,13 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+# calibration data structure
 cdt = np.dtype([
     ('index', np.uint8),
-    ('meta_addr', np.uint8, 2),
-    ('clemens_addr', np.uint, 2),
-    ('func_para', np.float32),
-    ('time', np.datetime64)
+    ('meta_addr', np.uint8, 2), # meta
+    ('clemens_addr', np.uint, 2), 
+    ('func_para', np.float32), # parameters of electrical power vs. optical phase fitting function
+    ('time', np.datetime64) # calibration operated time
 ])
 
 def fit_func(a,b,c,d):

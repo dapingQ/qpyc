@@ -2,7 +2,6 @@ import numpy as np
 from qpic.Device import Component, Waveguide, PhaseShifter, BeamSpiliter, MZI
 from qpic.Device import Circuit
 
-
 W1 = Waveguide(dom=1)
 W2 = Waveguide(dom=2)
 P1 = PhaseShifter(phase=.25)
@@ -14,7 +13,6 @@ def test_comp():
     MZI = P1 @ W1 >> BS
     # MZI1 = MZI(0,0)
     print(MZI.matrix)
-
 
 def test_circuit():
     C = Circuit()
@@ -28,10 +26,9 @@ def test_circuit():
     print(C.matrix)
     E = D@C
     print(E.devices)
+    E.plot()
 
-# C = Circuit()
-# C.devices = [Component((4,0)), Component((0,2)), Component((1,1))]
-# print(C.devices)
+
 
 if __name__ == "__main__":
     # import doctest
