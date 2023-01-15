@@ -388,6 +388,7 @@ class Circuit:
         dev_list = [d.addr for d in self._devices] if len(
             self._devices) != 0 else []
         dev_list.sort(key=lambda d: d[0])
+        dev_list.sort(key=lambda d: d[1])
         return dev_list
 
     # @devices.setter
@@ -398,11 +399,12 @@ class Circuit:
         """
         Add devices into the circiut.
         """
-        for d in dd:
+        for d in dd[0]:
             if isinstance(d, Component) is False:
                 raise TypeError('Only Component can be added into Circuit.')
             elif d in self._devices:
                 raise Warning('Device is already in Circuit.')
+
             if d.addr == None:
                 d.addr = [self.depth + 1, 1]
             elif d.addr in self.dev_addr:
@@ -496,5 +498,6 @@ class Circuit:
         # plt.close()
         
 if __name__ == "__main__":
-    import doctest
-    doctest.testmod()
+    pass
+    # import doctest
+    # doctest.testmod()

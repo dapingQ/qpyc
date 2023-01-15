@@ -18,6 +18,7 @@ def test_circuit():
     C = Circuit()
     print(C.depth, C.width)
     C.add(P1@W1)
+    C.add([BS, TBS])
     # print(C.__repr__())
     # C.add(BS)
     D = C.copy()

@@ -3,9 +3,10 @@ import matplotlib.patches as patches
 import numpy as np
 # from qpic.Device import Circuit
 
-# single device 
+# single grid size 
 DX = 8
 DY = 8
+# lattice size
 LX = 10
 LY = 10
 
@@ -39,8 +40,8 @@ def plot_circ(Circ, ax):
     WIDTH = Circ.depth * LX
     HEIGTH = Circ.width * LY 
 
-    [ ax.plot([0,WIDTH+LX+DX], [y,y], 'black', zorder=0) for y in np.arange(0, HEIGTH, LY)+LY+DY*.5 ]
-    [ ax.add_patch( patches.Rectangle((d.x*LX, d.y*LY ), height=(d.dom-1)*LY+DY, **ARGS) ) for d in Circ._devices ]
+    [ ax.plot([0,WIDTH+LX+DX], [HEIGTH-y,HEIGTH-y], 'black', zorder=0) for y in np.arange(0, HEIGTH, LY)[::-1]+LY+DY*.5 ]
+    [ ax.add_patch( patches.Rectangle((d.x*LX, HEIGTH-d.y*LY ), height=(d.dom-1)*LY+DY, **ARGS) ) for d in Circ._devices ]
     
     # [ ax.text( d.x*LX+DX*.5, d.y*LY+DY*.5, d.__class__.__name__+str(d.addr), horizontalalignment='center', \
             # verticalalignment='center', transform=ax.transAxes) for d in Circ._devices ]

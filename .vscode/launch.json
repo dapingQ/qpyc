@@ -12,13 +12,5 @@
             "console": "integratedTerminal",
             "justMyCode": true
         },
-        {
-            "name": "Python: Test Current File",
-            "type": "python",
-            "request": "launch",
-            "program": "./test/test_Mesh.py",
-            "console": "integratedTerminal",
-            "justMyCode": true
-        },
     ]
 }
