@@ -1,4 +1,4 @@
-from qpic.Device import Circuit, MZI
+from qpyc.Device import Circuit, MZI
 
 
 # ╔════════╦════════╦════════╦════════╦════════╦════════╗

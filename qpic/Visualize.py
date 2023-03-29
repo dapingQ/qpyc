@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import matplotlib.patches as patches
 import numpy as np
-# from qpic.Device import Circuit
+# from qpyc.Device import Circuit
 
 # single grid size 
 DX = 8
@@ -20,7 +20,7 @@ ARGS = {
 }
 
 
-def plot_circ(Circ, ax):
+def plot_circuit(Circ, ax):
     """Plot Circuit object at a grid.
     As each Component the depth is always 1, it is poloted as a vertical rectangular.
 

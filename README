@@ -1,4 +1,4 @@
-# QPIC 
+# Qpy(i)c 
 
 A python package for controlling quantum photonic integrated circuits.
 
@@ -9,15 +9,6 @@ Using editable mode to install this package
 
 ## devices
 
-### classical
-
-- Lfiber 2x6 optical switch 
-- homemade current driver
-- Santec MPM-210H multiport power meter
-
-### single photon
-
-- dotfast 64 channel timetagger
 
 ## chip
 

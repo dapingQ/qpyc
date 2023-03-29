@@ -1,6 +1,6 @@
-name = "qpic"
+name = "qpyc"
 author = "Zhenghao Yin"
-repository = "https://bitbucket.univie.ac.at/scm/~yinz96/qpic.git"
+repository = "https://bitbucket.univie.ac.at/scm/~yinz96/qpyc.git"
 readme = "README"
 
 requires = [
