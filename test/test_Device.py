@@ -14,17 +14,26 @@ def test_add():
     print(C.depth, C.width)
     C.add(P1@W1)
     C.add(BS, TBS)
+
+def test_MZI():
+    BS =  BeamSpiliter(0) 
+    D = PhaseShifter(1/3) @ Waveguide()
+    C = BS >> D >> BS
+    print(BS.matrix)
+    print(D.matrix)
     
+def test_circuit():
+    C = Circuit()
+    # C.add(BS)
+    C.add(BeamSpiliter(addr=(0,0)))
+    C.add(BeamSpiliter(addr=(1,1)))
+    # C.add(BS)
+    # C.add(BS)
+    C.plot()
+
+# def test_plot():
+
 
 if __name__ == "__main__":
-    # import doctest
-    # test_comp()
-    # test_circuit()
-    C1 = Circuit()
-    C1.add(Waveguide(dom=2))
-    C = Circuit()
-    C1.stack(C)
-    print(C.depth, C.width)
-    C.add(W1)
-    print(C[(1,1)])
-    
+    # test_MZI()
+    test_circuit()

@@ -1,3 +1,5 @@
+from qpyc.Device import Component
+
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -14,8 +16,7 @@ def fit_func(a,b,c,d):
     return lambda x: a*np.sin(x*b+c)+d
 
 
-
-class PhaseShifter(Component):
+class RealPhaseShifter(Component):
     """
     Phase shifter
     """

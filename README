@@ -2,15 +2,16 @@
 
 A python package for controlling quantum photonic integrated circuits.
 
+## Features
+
 ## Installation
 
-Using editable mode to install this package
+Recommend to install using pip in editable mode
+`git clone https://github.com/dapingQ/qpyc`
+`cd qpyc`
 `pip intall -e .`
 
-## devices
+## Development
 
 
-## chip
 
-
-## test

@@ -16,22 +16,6 @@ def checkAddr(addr):
     # else:
         # pass
 
-def xy2idx(addr):
-    """
-    Convert the xy coordinates into the index using in clements coding, in the diagonal order.
-    """
-    checkAddr(addr)
-    return int(sum(addr)**2*.25 - addr[1])
-
-# def xy2i(addr, N):
-#     """
-#     Convert the xy coordinates into the index in the vertical order.
-#     """
-#     checkAddr(addr)
-#     x, y = addr
-#     return int( ((x-1)*(N-1) + (y-1))//2 )
-
-
 class Component:
     def __init__(self, addr=None, dom=None) -> None:
         """Optical Component
@@ -172,7 +156,7 @@ class Component:
             raise ValueError('Only Component with the same dimension can be merged.')
         comp = Component(addr=self._addr)
         comp.dom = self.dom
-        comp.matrix = np.matmul(self.matrix, other.matrix)
+        comp.matrix = np.matmul(other.matrix, self.matrix)
         return comp
 
     def span(self, other):
@@ -261,7 +245,7 @@ class PhaseShifter(Component):
         Parameters
         ----------
         phase : int, optional
-            phase in unit of pi,, by default 0
+            phase in unit of pi, by default 0
         addr : list, optional
             address, by default None
         """
@@ -347,19 +331,14 @@ class MZI(Component):
     def matrix(self):
         """
         TODO: rewrite the matrix representation here
+        
+        >>> U2 = MZI(phase=.3, phi=.25)
+        >>> np.allclose(U2.matrix, )
         """
         mzi = PhaseShifter(self.phi) @ Waveguide() >> BeamSpiliter(self.bias[0]) >> \
             PhaseShifter(
                 self.theta) @ Waveguide() >> BeamSpiliter(self.bias[1])
         return mzi.matrix
-
-    # @property
-    # def clements_index(self):
-    #     """
-    #     Index using the clements coding, in the diagonal order.
-    #     """
-    #     return int(sum(self._addr)**2*.25 - self.y)
-
 
 class Circuit:
     """Cricuit class
@@ -406,7 +385,7 @@ class Circuit:
         """
         Circuit width, maximal y coordinate 
         """
-        return max([d.y+d.dom-1 for d in self._devices]) if len(self._devices) != 0 else 0
+        return max([d.y+d.dom for d in self._devices]) if len(self._devices) != 0 else 0
 
     @property
     def depth(self):
@@ -472,7 +451,7 @@ class Circuit:
         else:
             if d._addr == None:
                 d._addr = [self.depth + 1, 1]
-            elif d._addr in self.dev_addr:
+            elif d._addr in self.addrs:
                 raise Warning(f'Overlap Component at {d.addr}')
             self._devices.append(d)
 
