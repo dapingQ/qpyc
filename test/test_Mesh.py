@@ -8,7 +8,7 @@ def test_mesh():
     mesh.plot()
 
 def test_route():
-    print(mesh.Route([2,2]))
+    print(mesh.Route([2,4]))
 
 if __name__ == '__main__':
     test_route()

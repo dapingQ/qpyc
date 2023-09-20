@@ -2,6 +2,7 @@ from qpyc.Device import Component
 
 import numpy as np
 import matplotlib.pyplot as plt
+from scipy.optimize import curve_fit
 
 # calibration data structure
 cdt = np.dtype([
@@ -20,30 +21,53 @@ class RealPhaseShifter(Component):
     """
     Phase shifter
     """
-    def __init__(self, meta_addr, angle=0) -> None:
+    def __init__(self, addr, pin, rising_time=0.01):
         super().__init__(meta_addr)
-        self.angle = angle
-
-        self.pin = None
+        # self.angle = angle
+        self.addr = addr
+        self.pin = pin
         self.res = None
         self.offset = None
 
-        self.volts = np.linspace(0,10,100)
-        self.intensity = None
+        # self.volts = np.linspace(0,10,100)
+        # self.intensity = None        
+        # self.func = None
         
-        self.func = None
+    def SweepIV(self, ps, v_max=10, v_min=0, num=10):
+        vv = np.linspace(v_min, v_max, num)
+        ii = np.zeros_like(vv)
+        for i, v in enumerate(vv):
+            ps.v[self.pin] = v
+            ii[i] = ps.i[self.pin] 
+        return [vv, ii]
+    
+    def SweepVoltPhase(self, ps, opm, v_max=10, v_min=0, num=30):
+        volts = np.sqrt(np.linspace(v_min**2, v_max**2, num))
+        op = np.zeros_like(volts)
+        for i, v in enumerate(volts):
+            ps.v[self.pin] = v
+            op[i] = opm.read()
+        return [volts, op]
+    
+    def SweepCurrPhase(self, ps, opm, i_max=10, i_min=0, num=30):
+        currs = np.sqrt(np.linspace(i_min**2, i_max**2, num))
+        op = np.zeros_like(currs)
+        for i, c in enumerate(currs):
+            ps.i[self.pin] = c
+            op[i] = opm.read()
+        return [currs, op]
         
-    @property
-    def matrix(self):
-        return np.array([
-            [np.exp(1j*self.angle), 0],
-            [0,1+0j]
-        ], dtype=np.complex_)
-
-    # @staticmethod
-    def DummyCali(self):
-        f = fit_func(1,1,0,0)
-        self.intensity = f(self.volts) + np.random.random(100)*.1
-        
+    def SweepFit(self, ps, opm, i_max=10, i_min=0, num=30):
+        currs = np.sqrt(np.linspace(i_min**2, i_max**2, num))
+        volts = np.zeros_like(currs)
+        op = np.zeros_like(currs)
+        for i, c in enumerate(currs):
+            ps.i[self.pin] = c
+            volts[i] = ps.v[self.pin]
+            op[i] = opm.read()
+        pp = currs*volts
+        popt, pcov = curve_fit(fit_func, pp, op)
+        return popt
+    
 
     
