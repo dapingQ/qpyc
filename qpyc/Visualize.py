@@ -45,6 +45,7 @@ def plot_circuit(Circ, ax):
     
     # [ ax.text( d.x*LX+DX*.5, d.y*LY+DY*.5, d.__class__.__name__+str(d.addr), horizontalalignment='center', \
             # verticalalignment='center', transform=ax.transAxes) for d in Circ._devices ]
-    [ ax.text( d.x*LX+DX*.5, HEIGTH-d.y*LY-d.dom*.5*LY, d.__class__.__name__+str(d.addr), rotation='vertical') for d in Circ._devices ]
+    # [ ax.text( d.x*LX+DX*.5, HEIGTH-d.y*LY-d.dom*.5*LY, d.__class__.__name__+str(d.addr), rotation='vertical') for d in Circ._devices ]
+    [ ax.text( d.x*LX+DX*.5, HEIGTH-d.y*LY-d.dom*.5*LY, str(d.addr), rotation='vertical') for d in Circ._devices ]
     ax.axis('off')
     return ax

@@ -14,7 +14,6 @@ cdt = np.dtype([
     ('time', np.datetime64) # calibration operated time
 ])
 
-
 # CaliData = {}
 # CaliData['rising_time'] = 0.1 
 # CaliData['width'] = 6
@@ -22,28 +21,23 @@ cdt = np.dtype([
 # CaliData['rising_time'] = 0.1 
 # CaliData['phase_func']=np.array([],dtype=(100,cdt))
 
-calidata = np.zeros(30, dtype=cdt)
-calidata['addrs'] = ClementsMesh(6).addrs*2
-calidata['pins'] = np.arange(30)
-
 def fit_func(x, a, b, c, d):
     return a*np.sin(x*b+c)+d
 
 class RealPhaseShifter(Component):
     """
-    Phase shifter
+    Phase shifter to test in practise
     """
-    def __init__(self, addr, pin, rising_time=0.01, cal_data=None):
+    def __init__(self, addr, pin=None, rising_time=0.01, cal_data=None):
         super().__init__(addr)
-        # self.angle = angle
         self.addr = addr
-        self.pin = pin
-        # self.res = None
-        # self.offset = None
+            
         if cal_data is None:
             self.paras = None
+            self.pin = pin
         else:
-            self.paras = cal_data[np.where(cal_data['pin']==pin)]
+            self.paras = cal_data[np.where(cal_data['pins']==pin)]
+            self.pin = None
 
         # self.volts = np.linspace(0,10,100)
         # self.intensity = None        
@@ -57,20 +51,20 @@ class RealPhaseShifter(Component):
             ii[i] = ps.i[self.pin] 
         return [vv, ii]
     
-    def SweepVoltPhase(self, ps, opm, v_max=10, v_min=0, num=30):
+    def SweepVoltPhase(self, ps, opm_read, v_max=10, v_min=0, num=30):
         volts = np.sqrt(np.linspace(v_min**2, v_max**2, num))
         op = np.zeros_like(volts)
         for i, v in enumerate(volts):
             ps.v[self.pin] = v
-            op[i] = opm.read()
+            op[i] = opm_read()
         return volts, op
     
-    def SweepCurrPhase(self, ps, opm, i_max=10, i_min=0, num=30):
+    def SweepCurrPhase(self, ps, opm_read, i_max=10, i_min=0, num=30):
         currs = np.sqrt(np.linspace(i_min**2, i_max**2, num))
         op = np.zeros_like(currs)
         for i, c in enumerate(currs):
             ps.i[self.pin] = c
-            op[i] = opm.read()
+            op[i] = opm_read()
         return currs, op
     
     def SweepFitPhaseDummy(self, i_max=10, i_min=0, num=30, plot=False):
@@ -105,10 +99,16 @@ class RealPhaseShifter(Component):
     
     def SaveCali(self):
         pass
-    
+
+class ClementsCali(ClementsMesh):
+    def __init__(self, dimension=2) -> None:
+        super().__init__(dimension)
+        
 if __name__ == '__main__':
-    ps1 = RealPhaseShifter(pin=1, addr=(0,0))
+    calidata = np.zeros(30, dtype=cdt)
+    calidata['addrs'] = ClementsMesh(6).addrs*2 
+    calidata['pins'] = np.arange(30)
+    ps1 = RealPhaseShifter(pin=1, addr=(0,0), cal_data=calidata)
     print(ps1.SweepFitPhaseDummy(plot=True))
-    ps2 = RealPhaseShifter(pin=2)
-    # ps1.SweepCurrPhase
+    
     

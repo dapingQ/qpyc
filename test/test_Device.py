@@ -31,9 +31,6 @@ def test_circuit():
     # C.add(BS)
     C.plot()
 
-# def test_plot():
-
-
 if __name__ == "__main__":
     # test_MZI()
     test_circuit()

@@ -69,7 +69,7 @@ class ClementsMesh(Circuit):
         """
         Convert the xy coordinates into the index using in clements coding, in the diagonal order.
         """
-        return int(sum(addr)**2*.25 - addr[1] )
+        return int(sum(addr)**2*.25 - addr[1])
 
     def order(self, addr):
         """
@@ -115,17 +115,6 @@ class ClementsMesh(Circuit):
         in1, in2, _, _, port_in, _  = self.Route(MZILeft)
         _, _, out1, out2, _, port_out = self.Route(MZIRight)
         return in1, in2, out1, out2, port_in, port_out
-
-
-class FakeMesh(ClementsMesh):
-    def __init__(self, dimension=2) -> None:
-        super().__init__(dimension)
-
-class RealMesh(ClementsMesh):
-    def __init__(self, opm, power_supply, dimension) -> None:
-        super().__init__(dimension)
-        
-
 
 if __name__ == '__main__':
     mesh = ClementsMesh(dimension=6) 

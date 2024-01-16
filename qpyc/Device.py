@@ -4,7 +4,6 @@ import matplotlib.pyplot as plt
 
 from qpyc.Visualize import plot_circuit
 
-
 def checkAddr(addr):
     """
     Check if the address is valid, in the form (x,y) and x+y is even
