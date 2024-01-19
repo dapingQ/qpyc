@@ -20,31 +20,41 @@ print('Route to enter from _right_lower', route_path_right_lower)
 print('Route to enter from _right_upper', route_path_right_upper)
 print(ports_in, ports_out)
 
+#%%
 
+from dev import pm, pin_i, pin_v, switch, q
+
+switch(0)
+print(pm())
 #%%
 
 # Start a Calibration
-from qpyc.Cali import ClementsCali, cdt, RealPhaseShifter
+from qpyc.Cali import ClementsCali, cdt, RealPhaseShifter, new_calidata
 from pycomo.Cali import sixmode_internal_pins, sixmode_external_pins
 
 # create a empty calibration data structure
-mesh = ClementsCali(6)
-calidata_int = np.zeros(len(mesh.addrs), dtype=cdt)
-calidata_int['addrs'] = mesh.addrs
-calidata_int['pins'] = sixmode_internal_pins
-calidata_int['time'] = np.datetime64('nat')
+calidata_int = new_calidata(6)
+
+calidata_int['pin'] = [[-1, 15, -1, 14, -1, 26], 
+                       [-1, 13, 12, 25, 24, -1],
+                       [10, 9, 11, 8, 23, 22],
+                       [-1, 7, 6, 21, 20, -1],
+                       [4, 3, 5, 2, 19, 18],
+                       [-1, 1, 0, 17, 16, -1]]
+
+mesh = ClementsCali(6, calidata_int)
 
 # hardware loading
-q = None
-osw.read_power = None
+# osw.read_power = None
 
-for a in mesh.addrs:
+for a in mesh.addrs[0:2]:
     print(f'calibrating {a}')
-    ps = RealPhaseShifter(pin=1, addr=(0,0), cal_data=calidata_int)
+    ps = RealPhaseShifter(addr=a, calidata=calidata_int)
+    # print(calidata_int[])
     # print(ps.SweepFitPhaseDummy(plot=True))
-    ps.SweepIV(ps=q)
-    popt = ps.SweepFitPhase(ps=q, osw.read_power)
-    print(popt)    
+    # ps.SweepIV(ps=q)
+    # popt = ps.SweepFitPhase(ps=q, osw.read_power)
+    # print(popt)    
 #%%
 
 ps1 = RealPhaseShifter(pin=1, addr=(0,0), cal_data=calidata)

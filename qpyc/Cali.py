@@ -3,46 +3,48 @@ from qpyc.Device import Component
 import numpy as np
 import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-import datetime
+import datetime, time
 from qpyc.Mesh import ClementsMesh
 
 # calibration data structure
 cdt = np.dtype([
-    ('pins', np.uint8),
-    ('addrs', np.uint8, 2), # meta
+    ('pin', np.uint8),
     ('func_paras', np.float32,), # parameters of electrical power vs. optical phase fitting function
     ('time', np.datetime64) # calibration operated time
 ])
 
-# CaliData = {}
-# CaliData['rising_time'] = 0.1 
-# CaliData['width'] = 6
-# CaliData['depth'] = 6
-# CaliData['rising_time'] = 0.1 
-# CaliData['phase_func']=np.array([],dtype=(100,cdt))
+def new_calidata(N):
+    calidata = np.zeros((N,N), dtype=cdt)
+    calidata['pin'] = np.array([np.nan]*N**2).reshape(N,N)
+    calidata['time'] = np.datetime64()
+    return calidata
 
 def fit_func(x, a, b, c, d):
-    return a*np.sin(x*b+c)+d
+    return a*np.sin( x*b + c ) + d
 
 class RealPhaseShifter(Component):
     """
     Phase shifter to test in practise
     """
-    def __init__(self, addr, pin=None, rising_time=0.01, cal_data=None):
+    def __init__(self, addr, rising_time=0.01, calidata=None, pin=None):
         super().__init__(addr)
         self.addr = addr
+        self.rising_time = rising_time
+        self.pin = pin
+        self.paras = None
+        if calidata is not None:
+            self.paras = calidata[addr]['func_paras']
+            self.pin = calidata[addr]['pin']
+            if pin is not None:
+                print('Overwrite Pin number') 
             
-        if cal_data is None:
-            self.paras = None
-            self.pin = pin
-        else:
-            self.paras = cal_data[np.where(cal_data['pins']==pin)]
-            self.pin = None
-
         # self.volts = np.linspace(0,10,100)
         # self.intensity = None        
         # self.func = None
         
+    def __repr__(self) -> str:
+        return f'Phase Shifter {self.addr} Pin {self.pin}'
+    
     def SweepIV(self, ps, v_max=10, v_min=0, num=10):
         vv = np.linspace(v_min, v_max, num)
         ii = np.zeros_like(vv)
@@ -91,24 +93,45 @@ class RealPhaseShifter(Component):
         for i, c in enumerate(currs):
             ps.i[self.pin] = c
             volts[i] = ps.v[self.pin]
+            time.sleep(self.rising_time)
             op[i] = opm.read()
         pp = currs*volts
         popt, pcov = curve_fit(fit_func, pp, op)
         self.paras = popt
         return popt
     
-    def SaveCali(self):
-        pass
+    def UpdateCali(self, calidata):
+        calidata[self.addr]['func_paras'] = self.paras
+        calidata[self.addr]['time'] = np.datetime64()
 
 class ClementsCali(ClementsMesh):
-    def __init__(self, dimension=2) -> None:
+    def __init__(self, dimension, calidata) -> None:
         super().__init__(dimension)
-        
+
+        phaseshitfers = []
+        for i in range(dimension):
+            for j in range(dimension):
+                phaseshitfers.append( RealPhaseShifter(addr=(i,j), calidata=calidata) )
+                # phaseshitfers.append( (i,j) )
+        self.phaseshitfers = phaseshitfers
+
+    def __getitem__(self, addr):
+        # return super().__getitem__(item)
+        return self.phaseshitfers[addr[0]*self.dimension+addr[1]]
+
 if __name__ == '__main__':
-    calidata = np.zeros(30, dtype=cdt)
-    calidata['addrs'] = ClementsMesh(6).addrs*2 
-    calidata['pins'] = np.arange(30)
-    ps1 = RealPhaseShifter(pin=1, addr=(0,0), cal_data=calidata)
-    print(ps1.SweepFitPhaseDummy(plot=True))
+    calidata_int = new_calidata(6)
+    calidata_int['pin'] = [[-1, 15, -1, 14, -1, 26], 
+                        [-1, 13, 12, 25, 24, -1],
+                        [10, 9, 11, 8, 23, 22],
+                        [-1, 7, 6, 21, 20, -1],
+                        [4, 3, 5, 2, 19, 18],
+                        [-1, 1, 0, 17, 16, -1]]
+
+    mesh = ClementsCali(6, calidata_int)
+
+    ps1 = RealPhaseShifter(addr=(0,0), calidata=calidata_int)
+    print('a')
+    # print(ps1.SweepFitPhaseDummy(plot=True))
     
     
