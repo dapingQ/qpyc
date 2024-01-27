@@ -2,7 +2,7 @@ import numpy as np
 import copy
 import matplotlib.pyplot as plt
 
-from qpyc.Visualize import plot_circuit
+from qpyc.Visualize import plot_address, plot_phase
 
 def checkAddr(addr):
     """
@@ -327,6 +327,10 @@ class MZI(Component):
         return f'MZI ({self.addr}, Phase={self.theta}, {self.phi})'
 
     @property
+    def phase(self):
+        return [self.theta, self.phi]
+    
+    @property
     def matrix(self):
         """
         TODO: rewrite the matrix representation here
@@ -432,12 +436,12 @@ class Circuit:
             raise ValueError('Required address has no Component.')
 
     def __add_single(self, d):
-        """_summary_
+        """ Add single device into the ciurcuit
 
         Parameters
         ----------
-        d : _type_
-            _description_
+        d : Device
+            The single device to be added
 
         >>> C = Circuit()
         >>> C.add(Waveguide(dom=2), Waveguide(dom=3))
@@ -456,7 +460,7 @@ class Circuit:
 
     def add(self, d, *dd):
         """
-        Add devices into the circiut.
+        Add devices into the circiut. Support single or a list of devices.
         
         >>> C = Circuit()
         >>> C.add(Waveguide(dom=2), Waveguide(dom=3))
@@ -470,10 +474,11 @@ class Circuit:
     def remove(self, device):
         """
         Remove single device by device obejct.
-        To do: by coordinate
         """
-        assert device in self._devices
-        self._devices.remove(device)
+        #todo: by coordinate
+        if type(device) is Component:
+            assert device in self._devices
+            self._devices.remove(device)
 
     @property
     def matrix(self):
@@ -546,8 +551,11 @@ class Circuit:
     def __matmul__(self, other):
         return self.stack(other)
 
-    def plot(self):
+    def plot(self, label='address'):
         _, ax = plt.subplots()
-        ax = plot_circuit(self, ax)
+        if label == 'address':
+            ax = plot_address(self, ax)
+        elif label == 'phase':
+            ax = plot_phase(self, ax)
         plt.show()
         # plt.close()

@@ -24,11 +24,8 @@ def test_MZI():
     
 def test_circuit():
     C = Circuit()
-    # C.add(BS)
     C.add(BeamSpiliter(addr=(0,0)))
     C.add(BeamSpiliter(addr=(1,1)))
-    # C.add(BS)
-    # C.add(BS)
     C.plot()
 
 if __name__ == "__main__":
