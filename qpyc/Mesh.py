@@ -115,8 +115,3 @@ class ClementsMesh(Circuit):
         in1, in2, _, _, port_in, _  = self.Route(MZILeft)
         _, _, out1, out2, _, port_out = self.Route(MZIRight)
         return in1, in2, out1, out2, port_in, port_out
-
-if __name__ == '__main__':
-    mesh = ClementsMesh(dimension=6) 
-    print(mesh.RouteExt([2,2]))
-    # test_route()

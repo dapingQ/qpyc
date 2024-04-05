@@ -558,4 +558,3 @@ class Circuit:
         elif label == 'phase':
             ax = plot_phase(self, ax)
         plt.show()
-        # plt.close()

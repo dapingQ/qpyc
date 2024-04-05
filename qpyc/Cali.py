@@ -15,8 +15,7 @@ cdt = np.dtype([
 
 def new_calidata(N):
     calidata = np.zeros((N,N), dtype=cdt)
-    calidata['pin'] = np.array([np.nan]*N**2).reshape(N,N)
-    # calidata['time'] = np.datetime64(1,'s')
+    calidata['pin'] = np.arange(N**2).reshape(N,N)
     return calidata
 
 def fit_func(x, a, b, c, d):
@@ -158,19 +157,6 @@ class Crosstalk(ClementsCali):
     def __init__(self, dimension, calidata) -> None:
         super().__init__(dimension, calidata)
 
-if __name__ == '__main__':
-    calidata_int = new_calidata(6)
-    calidata_int['pin'] = np.ma.masked_equal([[-1, 15, -1, 14, -1, 26], 
-                        [-1, 13, 12, 25, 24, -1],
-                        [10, 9, 11, 8, 23, 22],
-                        [-1, 7, 6, 21, 20, -1],
-                        [4, 3, 5, 2, 19, 18],
-                        [-1, 1, 0, 17, 16, -1]], -1)
-    # todo mask array
-    mesh = ClementsCali(6, calidata_int)
-
-    ps1 = PinPhaseShifter(addr=(0,0), calidata=calidata_int)
-    print('a')
-    # print(ps1.SweepFitPhaseDummy(plot=True))
-    
+    def SweepCrosstalk(self, ps, opm, i_max=10, i_min=0, num=30):
+        pass
     
